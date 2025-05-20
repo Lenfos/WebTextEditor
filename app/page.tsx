@@ -5,7 +5,9 @@ import LoginBackground from "@/components/LoginBackground";
 export default function Home() {
   return (
           <div className="" >
-              <LoginBackground children={<CredentialForms/>}/>
+              <LoginBackground
+                  className="flex justify-center items-center h-screen"
+                  children={<CredentialForms/>}/>
               <Toaster richColors />
           </div>
   );

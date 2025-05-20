@@ -17,6 +17,7 @@ export default async function Dashboard() {
 
     return (
         <LoginBackground
+            className="flex justify-center items-center h-screen"
             children={
             <Card className="w-3/4">
                 <CardHeader>

@@ -1,3 +1,5 @@
+"use client"
+
 import {
     AlignCenter, AlignJustify,
     AlignLeft,
@@ -13,15 +15,29 @@ import {
 import {Toggle} from "@/components/ui/toggle";
 import { Editor } from "@tiptap/react";
 import {Card} from "@/components/ui/card";
-
+import {JSX, useEffect, useRef} from "react";
+import {OptionButton} from "@/components/OptionButton";
+import SaveButton from "@/components/MenuButtons/SaveButton";
 
 export default function MenuBar({editor}: {editor: Editor | null}) {
+    const metaRef = useRef<{type?: OptionButton }>({});
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const loop = () => {
+        timerRef.current = setTimeout(() => {
+            InitButtonList();
+            // Appel récursif : continue la boucle
+            loop();
+        }, 100); // 1 seconde
+    };
+
 
     if (!editor) {
         return null;
     }
 
-    const options = [
+
+    const options : OptionButton[] = [
         {
             icon: <Heading1 className="size-4" />,
             onClick: () => editor.chain().focus().toggleHeading({level: 1}).run(),
@@ -79,7 +95,27 @@ export default function MenuBar({editor}: {editor: Editor | null}) {
         },
     ]
 
-    return <div className="z-50 !sticky top-4">
+    const InitButtonList = () => {
+        if (metaRef.current && metaRef.current.type) {
+            options.push(metaRef.current.type)
+            if (timerRef.current){
+                clearTimeout(timerRef.current)
+                timerRef.current = null
+            }
+        }
+        else {
+            if (!timerRef.current){
+                loop();
+            }
+        }
+        return null
+    }
+
+    return (
+        <div className="z-50 !sticky top-4">
+            {metaRef.current ? InitButtonList(): null}
+            {metaRef.current ? (
+                <SaveButton editor={editor} metaRef={metaRef} /> ): null}
                 <Card className="flex-row py-2 gap-0 ">
                     {options.map((option, index) => (
                         <Toggle key={index} pressed={option.pressed} onClick={option.onClick}>
@@ -87,5 +123,5 @@ export default function MenuBar({editor}: {editor: Editor | null}) {
                         </Toggle>
                     ))}
                 </Card>
-            </div>
+            </div>)
 }
