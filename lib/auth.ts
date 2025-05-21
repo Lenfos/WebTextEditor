@@ -49,6 +49,7 @@ export async function loginIsRequiredServer() {
     if (!session){
         return redirect("/");
     }
+    return session.user;
 }
 
 export async function loginIsRequiredClient() {

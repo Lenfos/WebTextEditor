@@ -6,6 +6,8 @@ import MenuBar from "@/components/MenuBar";
 import TextAlign from "@tiptap/extension-text-align";
 import Highlight from "@tiptap/extension-highlight";
 import {PageBreak} from "@/lib/page-break";
+import {useEffect} from "react";
+import {toast} from "sonner";
 
 
 const PAGE_HEIGHT = 931 // px utiles, hors marges
@@ -37,6 +39,35 @@ export default function TiptapEditor(){
         autofocus: false,
         immediatelyRender: false,
     });
+
+
+    useEffect(() => {
+        const getContent = () => {
+            try {
+                if (!editor){
+                    return;
+                }
+                editor.commands.clearContent();
+
+                const fileContent = sessionStorage.getItem("file");
+
+                if (!fileContent){
+                    throw Error();
+                }
+
+                const parsedFile = JSON.parse(fileContent);
+                editor.commands.setContent(parsedFile);
+            }
+            catch (e) {
+                console.log("Erreur:", e)
+                toast.error("Server error", {
+                    description: "Error while opening files, please try again",
+                    className: "text-base px-6 py-4 [&>div]:text-base"
+                })
+            }
+        };
+        getContent();
+    }, [editor])
 
     const checkIfNewPageNeeded = () => {
         const proseMirror = document.querySelector('.ProseMirror') as HTMLElement;

@@ -30,13 +30,15 @@ export default function SaveButton ({editor, metaRef} : SaveButtonProps) {
         const blob = new Blob([JSON.stringify(json)], { type: "application/json" });
         const file = new File([blob], "mon-doc.json", { type: "application/json" });
 
-        await startUpload([file]);
+
+        const filePath = await startUpload([file]);
+        console.log(filePath);
     }
 
     const ResultType ={
         icon: elem,
         onClick: clickHandler,
-        pressed: true,
+        pressed: isUploading,
     }
 
     const init = () => {

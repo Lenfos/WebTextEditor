@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card"
 import {loginIsRequiredServer} from "@/lib/auth";
 import ButtonRedirect from "@/components/ButtonRedirect";
+import ListFiles from "./listFlles";
 
 export default async function Dashboard() {
 
@@ -19,12 +20,13 @@ export default async function Dashboard() {
         <LoginBackground
             className="flex justify-center items-center h-screen"
             children={
-            <Card className="w-3/4">
+            <Card className="w-3/4 h-9/10">
                 <CardHeader>
                     <CardTitle>Choose your file</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="h-full">
                     <ButtonRedirect/>
+                    <ListFiles/>
             </CardContent>
         </Card>}
         />
