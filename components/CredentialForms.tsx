@@ -52,7 +52,7 @@ const onSubmit = async (e : any) => {
 }
 
     return (
-        <Card className={"w-[380px] h-1/2 flex flex-col justify-center gap-3"}>
+        <Card className={"w-[380px] h-1/2 flex flex-col justify-between gap-3 py-8"}>
             <CardHeader>
                 <CardTitle className="text-2xl">Sign In</CardTitle>
             </CardHeader>

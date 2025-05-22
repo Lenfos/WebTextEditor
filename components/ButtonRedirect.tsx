@@ -2,7 +2,6 @@
 
 import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
-import {useEffect} from "react";
 import {toast} from "sonner";
 
 export default function ButtonRedirect() {
@@ -25,5 +24,5 @@ export default function ButtonRedirect() {
         }
     }
 
-    return <Button onClick={(e) => { onClickButton()}}>Go to editor</Button>
+    return <Button onClick={(e) => { onClickButton()}}>New file</Button>
 }

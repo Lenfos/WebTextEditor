@@ -1,15 +1,11 @@
 "use client"
 
-import {OptionButton} from "@/components/OptionButton";
+import {OptionButton, SaveButtonProps} from "@/components/OptionButton";
 import {Save} from "lucide-react";
-import React, {useRef} from "react";
+import React, {useEffect, useRef} from "react";
 import {Editor} from "@tiptap/react";
 import {useUploadThing} from "@/lib/uploadThingUtils";
 
-type SaveButtonProps = {
-    editor: Editor | null;
-    metaRef: React.RefObject<{ type?: OptionButton }>;
-};
 
 export default function SaveButton ({editor, metaRef} : SaveButtonProps) {
     const {startUpload, isUploading} = useUploadThing("jsonUploader", {
@@ -41,10 +37,13 @@ export default function SaveButton ({editor, metaRef} : SaveButtonProps) {
         pressed: isUploading,
     }
 
-    const init = () => {
-        metaRef.current.type = ResultType;
-    }
+    useEffect(() => {
+        const init = () => {
+            if (!metaRef.current) return;
+            metaRef.current.type = ResultType;
+        };
+        init();
+    }, []);
 
-    init();
     return <></>
 }

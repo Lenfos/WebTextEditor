@@ -1,4 +1,5 @@
-import {JSX} from "react";
+import React, {JSX} from "react";
+import {Editor} from "@tiptap/react";
 
 
 export type OptionButton = {
@@ -6,3 +7,8 @@ export type OptionButton = {
     onClick : any,
     pressed: boolean
 }
+
+export type SaveButtonProps = {
+    editor: Editor | null;
+    metaRef: React.RefObject<{ type?: OptionButton }>;
+};

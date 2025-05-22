@@ -15,29 +15,39 @@ import {
 import {Toggle} from "@/components/ui/toggle";
 import { Editor } from "@tiptap/react";
 import {Card} from "@/components/ui/card";
-import {JSX, useEffect, useRef} from "react";
+import {JSX, useEffect, useRef, useState} from "react";
 import {OptionButton} from "@/components/OptionButton";
 import SaveButton from "@/components/MenuButtons/SaveButton";
+import ExportButton from "@/components/MenuButtons/ExportButton";
+import {Separator} from "@/components/ui/separator";
 
 export default function MenuBar({editor}: {editor: Editor | null}) {
-    const metaRef = useRef<{type?: OptionButton }>({});
-    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const SaveMetaRef = useRef<{type?: OptionButton }>({type : undefined});
+    const ExportMetaRef = useRef<{type?: OptionButton }>({type : undefined});
+    const [dynamicOptions, setDynamicOptions] = useState<OptionButton[]>([]);
 
-    const loop = () => {
-        timerRef.current = setTimeout(() => {
-            InitButtonList();
-            // Appel récursif : continue la boucle
-            loop();
-        }, 100); // 1 seconde
-    };
+    useEffect(() => {
+        const initButtonList = () => {
+            const saveType = SaveMetaRef.current?.type;
+            const exportType = ExportMetaRef.current?.type;
 
+            const extra: OptionButton[] = [];
+            if (saveType) extra.push(saveType);
+            if (exportType) extra.push(exportType);
+
+            setDynamicOptions(extra);
+        };
+
+        initButtonList();
+
+    }, [SaveMetaRef.current.type, ExportMetaRef.current.type]);
 
     if (!editor) {
         return null;
     }
 
 
-    const options : OptionButton[] = [
+    const staticOptions : OptionButton[] = [
         {
             icon: <Heading1 className="size-4" />,
             onClick: () => editor.chain().focus().toggleHeading({level: 1}).run(),
@@ -95,32 +105,34 @@ export default function MenuBar({editor}: {editor: Editor | null}) {
         },
     ]
 
-    const InitButtonList = () => {
-        if (metaRef.current && metaRef.current.type) {
-            options.push(metaRef.current.type)
-            if (timerRef.current){
-                clearTimeout(timerRef.current)
-                timerRef.current = null
-            }
-        }
-        else {
-            if (!timerRef.current){
-                loop();
-            }
-        }
-        return null
-    }
+
+    const options : any = [];
+    options.push(dynamicOptions);
+    options.push(staticOptions);
+
+
 
     return (
-        <div className="z-50 !sticky top-4">
-            {metaRef.current ? InitButtonList(): null}
-            {metaRef.current ? (
-                <SaveButton editor={editor} metaRef={metaRef} /> ): null}
+            <div className="z-50 !sticky top-4">
+                <SaveButton editor={editor} metaRef={SaveMetaRef} />
+                <ExportButton editor={editor} metaRef={ExportMetaRef} />
                 <Card className="flex-row py-2 gap-0 ">
-                    {options.map((option, index) => (
-                        <Toggle key={index} pressed={option.pressed} onClick={option.onClick}>
-                            {option.icon}
-                        </Toggle>
+                    {options.map((section : any, sectionIndex : any) => (
+                        <div key={sectionIndex} className="flex items-center">
+                            {section.map((option : any, index : any) => (
+                                <Toggle
+                                    key={`${sectionIndex}-${index}`}
+                                    pressed={option.pressed}
+                                    onClick={option.onClick}
+                                >
+                                    {option.icon}
+                                </Toggle>
+                            ))}
+                            {/* Ajoute un séparateur entre les sections, sauf après la dernière */}
+                            {sectionIndex < options.length - 1 && (
+                                <Separator orientation="vertical" className="mx-1 bg-foreground" />
+                            )}
+                        </div>
                     ))}
                 </Card>
             </div>)
