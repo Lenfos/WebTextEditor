@@ -52,10 +52,16 @@ export default function TiptapEditor(){
                 const fileContent = sessionStorage.getItem("file");
 
                 if (!fileContent){
+
                     throw Error();
                 }
 
+                if (fileContent == "new") {
+                    return;
+                }
+
                 const parsedFile = JSON.parse(fileContent);
+
                 editor.commands.setContent(parsedFile);
             }
             catch (e) {

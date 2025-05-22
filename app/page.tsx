@@ -8,7 +8,7 @@ export default function Home() {
               <LoginBackground
                   className="flex justify-center items-center h-screen"
                   children={<CredentialForms/>}/>
-              <Toaster richColors />
+
           </div>
   );
 }

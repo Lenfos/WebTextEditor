@@ -8,11 +8,18 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {Loader2} from "lucide-react";
 import {toast} from "sonner";
+import {useRive} from "@rive-app/react-canvas";
+import { Atma } from 'next/font/google'
+
+const atma = Atma({
+    weight: "300",
+    subsets: ['latin']
+});
 
 type customFile = {
     id: number,
@@ -21,17 +28,15 @@ type customFile = {
     lastModified: number
 }
 
-const Files : customFile[] = [{
-    id: 0,
-    name: "Test",
-    lastModified: 20052025,
-    size: 123,
-}]
-
 export default function ListFiles() {
     const [files, setFiles] = useState<customFile[]>([])
     const [loading, setLoading] = useState<boolean>(true)
+    const [loadingEditor, setLoadingEditor] = useState<boolean>(false)
     const router = useRouter()
+    const {RiveComponent} = useRive({
+        src: "/ghosty.riv",
+        autoplay: true,
+    })
 
 
     useEffect(() => {
@@ -57,6 +62,8 @@ export default function ListFiles() {
 
     const onClickGetFile = async (id: number) => {
         try {
+            setLoadingEditor(true);
+
             const jsonFile = await fetch(`/api/Files/${id}`);
 
             if (jsonFile.status != 200) {
@@ -67,8 +74,10 @@ export default function ListFiles() {
             const stringFile = JSON.stringify(res);
             sessionStorage.setItem("file", stringFile);
 
+            setLoadingEditor(true)
             router.push("/dashboard/editor")
         } catch (e) {
+            setLoadingEditor(false);
             toast.error("Server error", {
                 description: "Error while opening files editor, please try again",
                 className: "text-base px-6 py-4 [&>div]:text-base"
@@ -76,6 +85,18 @@ export default function ListFiles() {
         }
     }
 
+    if (loadingEditor) {
+        return <div className="absolute top-0 left-0 w-screen h-screen bg-loading-background flex justify-center items-center">
+            <Loader2 className="animate-spin size-10"/>
+        </div>
+    }
+
+    if (!loading && files.length == 0) {
+        return <div className="flex justify-center items-center w-full h-full flex-col">
+                <RiveComponent className={"w-50 h-50 mr-10"}/>
+                <p className={"text-xl " + atma.className}>Ghosty didn't find existing files</p>
+            </div>
+    }
 
     return  loading ?
         <div className="flex justify-center items-center w-full h-full">
