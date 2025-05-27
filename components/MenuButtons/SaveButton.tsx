@@ -28,7 +28,6 @@ export default function SaveButton ({editor, metaRef} : SaveButtonProps) {
 
 
         const filePath = await startUpload([file]);
-        console.log(filePath);
     }
 
     const ResultType ={
